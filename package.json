@@ -1,6 +1,6 @@
 {
   "name": "postcss-define-property",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "PostCSS plugin to define and use custom properties",
   "keywords": [
     "postcss",
@@ -19,8 +19,10 @@
   },
   "homepage": "https://github.com/daleeidd/postcss-define-property",
   "dependencies": {
-    "extend": "^3.0.0",
-    "postcss": "^5.2.9"
+    "extend": "^3.0.0"
+  },
+  "peerDependencies": {
+    "postcss": "^8.0.0"
   },
   "devDependencies": {
     "chai": "^3.0.0",

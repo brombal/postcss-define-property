@@ -62,7 +62,7 @@ var apply = function (customProperty, declaration) {
   declaration.remove();
 };
 
-module.exports = postcss.plugin('postcss-properties-properties', function (options) {
+module.exports = function (options) {
 
   var defaults = {
     syntax: {
@@ -93,27 +93,30 @@ module.exports = postcss.plugin('postcss-properties-properties', function (optio
   propertyKeyDelimiter  = options.syntax.separator;
   customPropertyPattern = new RegExp('^.+?' + propertyKeyDelimiter + ' ');
 
-  return function (css) {
-    var properties = Object.create(null);
+  return {
+    postcssPlugin: 'postcss-properties-properties',
+    Once: function defineProperty(css) {
+      var properties = Object.create(null);
 
-    css.walk(function (node) {
-      if (options.syntax.atrule === '' && node.type === 'rule') {
-        if (node.selector.match(customPropertyPattern)) {
-          define(properties, node, options);
+      css.walk(function (node) {
+        if (options.syntax.atrule === '' && node.type === 'rule') {
+          if (node.selector.match(customPropertyPattern)) {
+            define(properties, node, options);
+          }
+        } else if (options.syntax.atrule !== '' && node.type === 'atrule') {
+          if (node.name === options.syntax.atrule) {
+            define(properties, node, options);
+          }
+        } else if (node.type === 'decl') {
+          node.values = postcss.list.space(node.value);
+          var property = node.prop + signatureSeparator + node.values.length;
+          if (properties[property]) {
+            apply(properties[property], node, options);
+          }
         }
-      }
-      else if (options.syntax.atrule !== '' && node.type === 'atrule') {
-        if (node.name === options.syntax.atrule) {
-          define(properties, node, options);
-        }
-      }
-      else if (node.type === 'decl') {
-        node.values = postcss.list.space(node.value);
-        var property = node.prop + signatureSeparator + node.values.length;
-        if (properties[property]) {
-          apply(properties[property], node, options);
-        }
-      }
-    });
+      });
+    }
   };
-});
+};
+
+module.exports.postcss = true;
