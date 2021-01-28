@@ -94,7 +94,7 @@ module.exports = function (options) {
   customPropertyPattern = new RegExp('^.+?' + propertyKeyDelimiter + ' ');
 
   return {
-    postcssPlugin: 'postcss-properties-properties',
+    postcssPlugin: 'postcss-define-property',
     Once: function defineProperty(css) {
       var properties = Object.create(null);
 
